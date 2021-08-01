@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 import Logo from '../../assets/logo.svg';
+import { api } from '../../services/api';
 import { Car } from '../../components/Car';
+import { CarDto } from '../../dtos/CarDTO';
 
 import {
   Container,
@@ -13,23 +15,29 @@ import {
   TotalCars,
   CarList,
 } from './styles';
+import { Load } from '../../components/Load';
 
 export function Home() {
+  const [cars, setCars] = useState<CarDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
 
-  const carDataOne = {
-    brand: 'audi',
-    name: 'RS 5 Coupé',
-    rent: {
-      period: 'AO DIA',
-      price: 120
-    },
-    thumbnail: 'https://production.autoforce.com/uploads/version/profile_image/3188/model_main_comprar-tiptronic_87272c1ff1.png'
+  function handleCarDetails(car: CarDto) {
+    navigation.navigate('CarDetails', { car });
   }
 
-  function handleCarDetails() {
-    navigation.navigate('CarDetails')
-  }
+  useEffect(() => {
+    try {
+      (async () => {
+        const response = await api.get('/cars');
+        setCars(response.data);
+      })();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [])
 
   return (
     <Container>
@@ -49,16 +57,18 @@ export function Home() {
           </TotalCars>
         </HeaderContent>
       </Header>
-      <CarList
-        data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        keyExtractor={item => String(item)}
-        renderItem={(item) => (
-          <Car
-            data={carDataOne}
-            onPress={handleCarDetails}
-          />
-        )}
-      />
+      {isLoading ? <Load /> :
+        <CarList
+          data={cars}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <Car
+              data={item}
+              onPress={() => handleCarDetails(item)}
+            />
+          )}
+        />
+      }
     </Container>
   );
 }
