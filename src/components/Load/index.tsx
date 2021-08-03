@@ -1,12 +1,15 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
-import { useTheme } from 'styled-components';
+import theme from '../../styles/theme';
 
-export function Load() {
-  const theme = useTheme();
+interface Props {
+  color?: string;
+}
+
+export function Load({ color = theme.colors.main }: Props) {
   return (
     <ActivityIndicator
-      color={theme.colors.main}
+      color={color}
       size="large"
       style={{ flex: 1 }}
     />

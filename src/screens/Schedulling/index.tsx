@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'react-native';
 import { useTheme } from 'styled-components';
-import { useNavigation } from '@react-navigation/native';
-
-import { BackButton } from '../../components/BackButton';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { format } from 'date-fns';
+import { getPlatformDate } from '../../utils/getPlatformDate';
 import {
   Calendar,
   DayProps,
   generateInterval,
   MarkedDateProps
 } from '../../components/Calendar';
+
+import { BackButton } from '../../components/BackButton';
 import { Button } from '../../components/Button';
+import { Params } from '../CarDetails';
 
 import ArrowSvg from '../../assets/arrow.svg';
 import {
@@ -25,14 +28,26 @@ import {
   Footer
 } from './styles';
 
+interface RentalPeriod {
+  startFormatted: string;
+  endFormatted: string;
+}
+
 export function Schedulling() {
   const [lastSelectedDate, setLastSelectedDate] = useState<DayProps>({} as DayProps);
   const [markedDates, setMarkedDates] = useState<MarkedDateProps>({} as MarkedDateProps);
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as RentalPeriod);
   const theme = useTheme();
   const navigation = useNavigation();
+  const route = useRoute();
+  const { car } = route.params as Params;
 
   function handleConfirmRental() {
-    navigation.navigate('SchedullingDetails');
+    navigation.navigate('SchedullingDetails', {
+      car,
+      dates: Object.keys(markedDates)
+    });
+
   }
 
   function handleBack() {
@@ -51,6 +66,14 @@ export function Schedulling() {
     setLastSelectedDate(end);
     const interval = generateInterval(start, end);
     setMarkedDates(interval);
+
+    const firstDate = Object.keys(interval)[0];
+    const endDate = Object.keys(interval)[Object.keys(interval).length - 1];
+
+    setRentalPeriod({
+      startFormatted: format(getPlatformDate(new Date(firstDate)), 'dd/MM/yyyy'),
+      endFormatted: format(getPlatformDate(new Date(endDate)), 'dd/MM/yyyy')
+    })
   }
 
   return (
@@ -73,15 +96,15 @@ export function Schedulling() {
         <RentalPeriod>
           <DateInfo>
             <DateTitle>DE</DateTitle>
-            <DateValue selected={false}>
-              18/06/2021
+            <DateValue selected={!!rentalPeriod.startFormatted}>
+              {rentalPeriod.startFormatted}
             </DateValue>
           </DateInfo>
           <ArrowSvg />
           <DateInfo>
             <DateTitle>ATÉ</DateTitle>
-            <DateValue selected={false}>
-              18/06/2021
+            <DateValue selected={!!rentalPeriod.endFormatted}>
+              {rentalPeriod.endFormatted}
             </DateValue>
           </DateInfo>
         </RentalPeriod>
@@ -98,6 +121,7 @@ export function Schedulling() {
         <Button
           title="Confirmar"
           onPress={handleConfirmRental}
+          enabled={!!rentalPeriod.endFormatted}
         />
       </Footer>
     </Container>

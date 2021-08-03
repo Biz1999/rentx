@@ -24,7 +24,7 @@ import {
   Footer
 } from './styles';
 
-interface Params {
+export interface Params {
   car: CarDto;
 }
 
@@ -34,7 +34,7 @@ export function CarDetails() {
   const { car } = route.params as Params;
 
   function handleConfirmRental() {
-    navigation.navigate('Schedulling');
+    navigation.navigate('Schedulling', { car });
   }
   function handleBack() {
     navigation.goBack();
