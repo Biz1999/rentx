@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { FlatList, StatusBar } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useTheme } from 'styled-components';
-import { AntDesign } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import { FlatList, StatusBar } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components";
+import { AntDesign } from "@expo/vector-icons";
 
-import { CarDto } from '../../dtos/CarDTO';
-import { api } from '../../services/api';
-import { BackButton } from '../../components/BackButton';
-import { Car } from '../../components/Car';
-import { Load } from '../../components/Load';
+import { CarDto } from "../../dtos/CarDTO";
+import { api } from "../../services/api";
+import { BackButton } from "../../components/BackButton";
+import { Car } from "../../components/Car";
+import { LoadAnimation } from "../../components/LoadAnimation";
 
 import {
   Container,
@@ -24,7 +24,7 @@ import {
   CarFooterTitle,
   CarFooterPeriod,
   CarFooterDate,
-} from './styles';
+} from "./styles";
 
 interface CarProps {
   id: string;
@@ -48,7 +48,7 @@ export function Mycars() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await api.get('/schedules_byuser?user_id=1');
+        const response = await api.get("/schedules_byuser?user_id=1");
         setCars(response.data);
       } catch (error) {
         console.log(error);
@@ -56,7 +56,7 @@ export function Mycars() {
         setLoading(false);
       }
     })();
-  }, [])
+  }, []);
 
   return (
     <Container>
@@ -66,17 +66,16 @@ export function Mycars() {
           translucent
           backgroundColor="transparent"
         />
-        <BackButton
-          onPress={handleBack}
-          color={theme.colors.shape}
-        />
+        <BackButton onPress={handleBack} color={theme.colors.shape} />
         <Title>
-          Seus agendamentos,{'\n'}
+          Seus agendamentos,{"\n"}
           estão aqui.
         </Title>
         <Subtitle>Conforto, segurança e praticidade.</Subtitle>
       </Header>
-      {loading ? <Load /> :
+      {loading ? (
+        <LoadAnimation />
+      ) : (
         <Content>
           <Appointment>
             <AppointmentTitle>Agendamentos feitos</AppointmentTitle>
@@ -85,7 +84,7 @@ export function Mycars() {
 
           <FlatList
             data={cars}
-            keyExtractor={item => String(item.id)}
+            keyExtractor={(item) => String(item.id)}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <CarWrapper key={item.id}>
@@ -107,8 +106,7 @@ export function Mycars() {
             )}
           />
         </Content>
-      }
+      )}
     </Container>
   );
 }
-
