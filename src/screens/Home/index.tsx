@@ -26,7 +26,7 @@ import { Container, Header, HeaderContent, TotalCars, CarList } from "./styles";
 
 export function Home() {
   const [cars, setCars] = useState<CarDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const positionY = useSharedValue(0);
   const positionX = useSharedValue(0);
@@ -73,7 +73,7 @@ export function Home() {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -93,10 +93,10 @@ export function Home() {
       <Header>
         <HeaderContent>
           <Logo height={RFValue(12)} width={RFValue(108)} />
-          {!isLoading && <TotalCars>Total de {cars.length} carros</TotalCars>}
+          {!loading && <TotalCars>Total de {cars.length} carros</TotalCars>}
         </HeaderContent>
       </Header>
-      {isLoading ? (
+      {loading ? (
         <LoadAnimation />
       ) : (
         <CarList
