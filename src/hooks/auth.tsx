@@ -36,7 +36,8 @@ function AuthProvider({ children }: AuthProviderProps) {
       email,
       password,
     });
-    console.log(response.data);
+    const { user, token } = response.data;
+    setData({ user, token });
   };
 
   return (
