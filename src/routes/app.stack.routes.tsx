@@ -4,14 +4,14 @@ import { CarDetails } from "../screens/CarDetails";
 import { Schedulling } from "../screens/Schedulling";
 import { SchedullingDetails } from "../screens/SchedullingDetails";
 import { Confirmation } from "../screens/Confirmation";
-import { AppTabRoutes } from "./app.tab.routes";
+import { Home } from "../screens/Home";
 
 const { Navigator, Screen } = createStackNavigator();
 
 export function AppStackRoutes() {
   return (
     <Navigator headerMode="none" initialRouteName="Home">
-      <Screen name="Home" component={AppTabRoutes} />
+      <Screen name="Home" component={Home} />
       <Screen name="CarDetails" component={CarDetails} />
       <Screen name="Schedulling" component={Schedulling} />
       <Screen name="SchedullingDetails" component={SchedullingDetails} />
