@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { StatusBar, StyleSheet, BackHandler } from "react-native";
+import { StatusBar, StyleSheet, BackHandler, Alert } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 import { useNavigation } from "@react-navigation/native";
 
@@ -16,6 +17,7 @@ export function Home() {
   const [cars, setCars] = useState<CarDto[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const netinfo = useNetInfo();
   const navigation = useNavigation();
   function handleCarDetails(car: CarDto) {
     navigation.navigate("CarDetails", { car });
@@ -44,11 +46,12 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", () => {
-      return true;
-    });
-  });
-
+    if (netinfo.isConnected) {
+      Alert.alert("Você está On-line");
+    } else {
+      Alert.alert("Você está offline");
+    }
+  }, [netinfo.isConnected]);
   return (
     <Container>
       <StatusBar
