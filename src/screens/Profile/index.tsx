@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import { useAuth } from "../../hooks/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 
@@ -44,12 +45,19 @@ export function Profile() {
 
   const theme = useTheme();
   const navigation = useNavigation();
+  const netInfo = useNetInfo();
 
   function handleBack() {
     navigation.goBack();
   }
 
   function handleOptionsChange(optionSelected: "dataEdit" | "passwordEdit") {
+    if (netInfo.isConnected === false && optionSelected === "passwordEdit") {
+      return Alert.alert(
+        "Você está offline",
+        "Para mudar a senha, conecte-se a Internet"
+      );
+    }
     setOption(optionSelected);
   }
 
